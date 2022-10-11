@@ -1,11 +1,11 @@
 // TODO: Include packages needed for this application
 const inquirer = require(inquirer);
 const fs = require("fs");
-const generateMarkdown = "./src/generateMarkdown";
+const readMeTemplate = require("./src/generate-readme");
 
 // TODO: Create an array of questions for user input
 
-const promptUser = () => {
+const promptUserQuestion = () => {
   return inquirer.prompt([
     {
       type: "input",
@@ -49,20 +49,7 @@ const promptUser = () => {
         }
       }
     },
-  ]);
-};
-
-const promptQuestions = (projectData) => {
-  console.log(`
-  ===================
-   Add a new Project
-  ===================
-  `);
-  if (!projectData.questions) {
-    projectData.questions = [];
-  }
-
-  return inquirer.prompt([
+  
     {
       type: "input",
       name: "Project Name",
@@ -133,19 +120,24 @@ const promptQuestions = (projectData) => {
           }
     },
   ]);
-};
+
+  .then(results => {
+    return results
+  })
+}
 
 
-  promptUser()
-  .then(promptQuestions)
-  .then((projectData) => {
-
-    const pageHTML = generateMarkdown(projectData);
-
-    fs.writeFile("./index.html", pageHTML, (err) => {
+//TODO: create a function to write the README file
+    fs.writeFile("./index.html", promptUserQuestion, (err) => {
       if (err) throw err;
       console.log(
         "Page created! Check out index.html in this directory to see it!"
       );
     });
-  })
+//TODO: create a function to initialize app
+function init(){
+
+}
+//TODO: function call to initialize app
+ init()
+  
