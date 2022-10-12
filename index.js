@@ -1,22 +1,23 @@
 // TODO: Include packages needed for this application
-const inquirer = require(inquirer);
+const inquirer = require("inquirer");
 const fs = require("fs");
+const genMarkdown = require("./utils/generateMarkdown")
 const readMeTemplate = require("./src/generate-readme");
 
 // TODO: Create an array of questions for user input
 
-const promptUserQuestion = () => {
-  return inquirer.prompt([
+const promptUserQuestion = [ 
+  
     {
       type: "input",
-      name: "Github name",
+      name: "githubName",
       message: "What is your Github Username?(required)",
       validate: (nameInput) =>{
         if(nameInput){
-            return true
+            return true;
         }else {
-            console.log("please enter your Github Username")
-            return false
+            console.log("please enter your Github Username");
+            return false;
         }
       }
     },
@@ -119,24 +120,30 @@ const promptUserQuestion = () => {
             }
           }
     },
-  ]);
+  ]
 
-  .then(results => {
-    return results
-  })
-}
+
+ 
 
 
 //TODO: create a function to write the README file
-    fs.writeFile("./index.html", promptUserQuestion, (err) => {
+function questions(promptUserQuestion){// this needs to be called on line 146
+    fs.writeFile("README.md",data, (err) => {
       if (err) throw err;
       console.log(
         "Page created! Check out index.html in this directory to see it!"
       );
     });
+}
 //TODO: create a function to initialize app
 function init(){
-
+inquirer.prompt(promptUserQuestion)
+.then(results => {
+    return readMeTemplate(results)
+})
+// .then(README => {
+//     return questions()
+// })
 }
 //TODO: function call to initialize app
  init()
