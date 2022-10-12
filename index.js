@@ -1,25 +1,17 @@
 // TODO: Include packages needed for this application
 const inquirer = require("inquirer");
 const fs = require("fs");
-const genMarkdown = require("./utils/generateMarkdown")
+const genMarkdown = require("./utils/generateMarkdown");
 const readMeTemplate = require("./src/generate-readme");
 
 // TODO: Create an array of questions for user input
 
-const promptUserQuestion = [ 
-  
+const promptUser = () => {
+  return inquirer.prompt([
     {
       type: "input",
       name: "githubName",
-      message: "What is your Github Username?(required)",
-      validate: (nameInput) =>{
-        if(nameInput){
-            return true;
-        }else {
-            console.log("please enter your Github Username");
-            return false;
-        }
-      }
+      message: "What is your Github Username?",
     },
 
     {
@@ -27,56 +19,56 @@ const promptUserQuestion = [
       name: "Github",
       message:
         "Please provide the deployed link to your  Github Repository?(required)",
-        validate: (nameInput) =>{
-            if(nameInput){
-                return true
-            }else {
-                console.log("please enter the deployed link")
-                return false
-            }
-          }
+      validate: (nameInput) => {
+        if (nameInput) {
+          return true;
+        } else {
+          console.log("please enter the deployed link");
+          return false;
+        }
+      },
     },
 
     {
       type: "input",
       name: "Email",
       message: "please enter your email(required)",
-      validate: (nameInput) =>{
-        if(nameInput){
-            return true
-        }else {
-            console.log("please enter your email")
-            return false
+      validate: (nameInput) => {
+        if (nameInput) {
+          return true;
+        } else {
+          console.log("please enter your email");
+          return false;
         }
-      }
+      },
     },
-  
+
     {
       type: "input",
       name: "Project Name",
       message: "What is the name of your project?(required)",
-      validate: (nameInput) =>{
-        if(nameInput){
-            return true
-        }else {
-            console.log("please enter your project name")
-            return false
+      validate: (nameInput) => {
+        if (nameInput) {
+          return true;
+        } else {
+          console.log("please enter your project name");
+          return false;
         }
-      }
+      },
     },
 
     {
       type: "input",
       name: "description of project",
       message: "Please provide a description of your project.(Required)",
-      validate: (nameInput) =>{
-        if(nameInput){
-            return true
-        }else {
-            console.log("please enter a project description")
-            return false
+      validate: (nameInput) => {
+        if (nameInput) {
+          return true;
+        } else {
+          console.log("please enter a project description");
+          return false;
         }
-      }
+      },
     },
 
     {
@@ -101,9 +93,8 @@ const promptUserQuestion = [
     {
       type: "checkbox",
       name: "license",
-      message:
-        "Please select all the Licenses used for this project.",
-      choices: ["MIT", "Apache", "BSD-3", "BSD-2", "ISC", "None"],
+      message: "Please select all the Licenses used for this project.",
+      choices: ["Apache", "MIT", "ISC","BSD-3", "BSD-2", "SIL-1.1", "None"],
     },
 
     {
@@ -111,40 +102,54 @@ const promptUserQuestion = [
       name: "testing",
       message:
         "Please provide a description on how to operate your project.(Required)",
-        validate: (nameInput) =>{
-            if(nameInput){
-                return true
-            }else {
-                console.log("please enter a description on how to operate your project.")
-                return false
-            }
-          }
+      validate: (nameInput) => {
+        if (nameInput) {
+          return true;
+        } else {
+          console.log(
+            "please enter a description on how to operate your project."
+          );
+          return false;
+        }
+      },
     },
-  ]
-
-
- 
-
+  ]);
+};
 
 //TODO: create a function to write the README file
-function questions(promptUserQuestion){// this needs to be called on line 146
-    fs.writeFile("README.md",data, (err) => {
-      if (err) throw err;
-      console.log(
-        "Page created! Check out index.html in this directory to see it!"
-      );
+const writeFile = (readmeContent) => {
+    return new promise((resolve, reject) => {
+      fs.writeFile("./dist/README.md", readmeContent, (err) => {
+        // if theres a error, reject the promise and send the error to the promises .catch() method
+        if (err) {
+          reject(err);
+          // return out of the function here to make sure the promsie doesnt accidently execute the resolve() fucntion as well
+          return;
+        }
+        // if everything went well, resolve the promise and send the successful data to the .then() method
+        resolve({
+          ok: true,
+          message: "file created",
+        });
+      });
     });
-}
-//TODO: create a function to initialize app
-function init(){
-inquirer.prompt(promptUserQuestion)
-.then(results => {
+  };
+
+function init () {
+promptUser() 
+.then(results =>{
+    return genMarkdown(results)
+})
+.then(results =>{
     return readMeTemplate(results)
 })
-// .then(README => {
-//     return questions()
-// })
+.then(readmeContent =>{
+    return writeFile(readmeContent)
+})
+.catch(err => {
+    console.log(err)
+  })
 }
-//TODO: function call to initialize app
- init()
-  
+
+init()
+
