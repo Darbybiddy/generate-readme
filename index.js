@@ -1,32 +1,16 @@
 // TODO: Include packages needed for this application
 const inquirer = require("inquirer");
 const fs = require("fs");
+const path = require("path")
 const genMarkdown = require("./utils/generateMarkdown");
-const readMeTemplate = require("./src/generate-readme");
 
 // TODO: Create an array of questions for user input
 
-const promptUser = () => {
-  return inquirer.prompt([
+  const questions = [
     {
       type: "input",
       name: "githubName",
       message: "What is your Github Username?",
-    },
-
-    {
-      type: "link",
-      name: "Github",
-      message:
-        "Please provide the deployed link to your  Github Repository?(required)",
-      validate: (nameInput) => {
-        if (nameInput) {
-          return true;
-        } else {
-          console.log("please enter the deployed link");
-          return false;
-        }
-      },
     },
 
     {
@@ -45,7 +29,7 @@ const promptUser = () => {
 
     {
       type: "input",
-      name: "Project Name",
+      name: "title",
       message: "What is the name of your project?(required)",
       validate: (nameInput) => {
         if (nameInput) {
@@ -59,7 +43,7 @@ const promptUser = () => {
 
     {
       type: "input",
-      name: "description of project",
+      name: "description",
       message: "Please provide a description of your project.(Required)",
       validate: (nameInput) => {
         if (nameInput) {
@@ -113,43 +97,20 @@ const promptUser = () => {
         }
       },
     },
-  ]);
-};
+  ]
+//   ]);
+// };
 
 //TODO: create a function to write the README file
-const writeFile = (readmeContent) => {
-    return new promise((resolve, reject) => {
-      fs.writeFile("./dist/README.md", readmeContent, (err) => {
-        // if theres a error, reject the promise and send the error to the promises .catch() method
-        if (err) {
-          reject(err);
-          // return out of the function here to make sure the promsie doesnt accidently execute the resolve() fucntion as well
-          return;
-        }
-        // if everything went well, resolve the promise and send the successful data to the .then() method
-        resolve({
-          ok: true,
-          message: "file created",
-        });
-      });
-    });
+const writeFile = (fileName, data) => {
+ return fs.writeFileSync(path.join(fileName),data)
   };
 
-function init () {
-promptUser() 
-.then(results =>{
-    return genMarkdown(results)
+  function init() {
+inquirer.prompt(questions).then((answers)=>{
+  writeFile("./dist/README.md" , genMarkdown({...answers}))
 })
-.then(results =>{
-    return readMeTemplate(results)
-})
-.then(readmeContent =>{
-    return writeFile(readmeContent)
-})
-.catch(err => {
-    console.log(err)
-  })
-}
+  }
 
-init()
 
+  init()
